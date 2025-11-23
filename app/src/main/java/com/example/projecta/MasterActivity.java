@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
  * MasterActivity - משמש כתבנית לכל שאר המסכים
  * כדי לספק תפריט ניווט אחיד.
  */
+
 public class MasterActivity extends AppCompatActivity {
 
     @Override
