@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menuActivity1"
+        android:title="הרשמה (1)" />
+
+    <item
+        android:id="@+id/menuActivity2"
+        android:title="בסיס נתונים (2)" />
+
+    <item
+        android:id="@+id/menuActivity3"
+        android:title="אחסון (3)" />
+
+    <item
+        android:id="@+id/menuActivity4"
+        android:title="התראות (4)" />
+
+    <item
+        android:id="@+id/menuActivity5"
+        android:title="שידורים (5)" />
+
+    <item
+        android:id="@+id/menuActivity6"
+        android:title="מפות (6)" />
+
+    <item
+        android:id="@+id/menuActivity7_8"
+        android:title="ניתוח קול (7+8)" />
+
+    <item
+        android:id="@+id/menuActivity9"
+        android:title="לוח שנה (9)" />
+
+</menu>
