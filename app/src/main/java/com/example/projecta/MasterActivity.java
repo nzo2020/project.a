@@ -58,7 +58,7 @@ public class MasterActivity extends AppCompatActivity {
         }
         else if (id == R.id.menuActivity4) {
             // TODO: שנה את 'NotificationActivity.class' לשם הנכון של אקטיביטי 4
-            Intent intent = new Intent(this, NotificationReceiver.class);
+            Intent intent = new Intent(this, ReminderActivity.class);
             startActivity(intent);
         }
         else if (id == R.id.menuActivity5) {
