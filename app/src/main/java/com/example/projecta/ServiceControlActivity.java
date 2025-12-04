@@ -1,12 +1,15 @@
-package com.example.projecta; // ודא שזה שם החבילה שלך
+package com.example.projecta;
 
 import android.content.Intent;
-import android.os.Build;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
-import androidx.appcompat.app.AppCompatActivity;
+import android.widget.Toast;
 
 public class ServiceControlActivity extends MasterActivity {
+
+    // משתנה לבדוק אם כבר נרשמנו, כדי לא להירשם פעמיים
+    private static boolean isRegistered = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -14,25 +17,35 @@ public class ServiceControlActivity extends MasterActivity {
         setContentView(R.layout.activity_service_control);
     }
 
-    /**
-     * נקראת על ידי הכפתור הראשון ("הפעל האזנה")
-     */
     public void startListening(View view) {
-        Intent serviceIntent = new Intent(this, PowerListenerService.class);
+        if (!isRegistered) {
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(Intent.ACTION_POWER_CONNECTED);
+            filter.addAction(Intent.ACTION_POWER_DISCONNECTED);
 
-        // באנדרואיד 8 ומעלה, חובה להשתמש ב-startForegroundService
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent);
+            // הטריק של החברה: getApplicationContext()
+            // זה גורם למאזין לעבוד גם כשיוצאים מהמסך הזה למסכים אחרים באפליקציה
+            getApplicationContext().registerReceiver(PowerReceiver.getInstance(), filter);
+
+            isRegistered = true;
+            Toast.makeText(this, "האזנה לטעינה הופעלה", Toast.LENGTH_SHORT).show();
         } else {
-            startService(serviceIntent);
+            Toast.makeText(this, "ההאזנה כבר פועלת", Toast.LENGTH_SHORT).show();
         }
     }
 
-    /**
-     * נקראת על ידי הכפתור השני ("הפסק האזנה")
-     */
     public void stopListening(View view) {
-        Intent serviceIntent = new Intent(this, PowerListenerService.class);
-        stopService(serviceIntent);
+        if (isRegistered) {
+            try {
+                // ביטול הרישום
+                getApplicationContext().unregisterReceiver(PowerReceiver.getInstance());
+                isRegistered = false;
+                Toast.makeText(this, "האזנה לטעינה הופסקה", Toast.LENGTH_SHORT).show();
+            } catch (IllegalArgumentException e) {
+                // למקרה שמנסים לבטל משהו שלא קיים
+            }
+        } else {
+            Toast.makeText(this, "ההאזנה כבויה כרגע", Toast.LENGTH_SHORT).show();
+        }
     }
 }
