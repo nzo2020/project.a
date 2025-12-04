@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.gms.google.services)
-    alias(libs.plugins.kotlin.android)
 }
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
@@ -24,6 +23,7 @@ android {
 
         // ⭐️ הנה התוספת שהייתה חסרה לך (מהמצגת) ⭐️
         buildConfigField("String", "Gemini_API_Key", "\"${localProperties.getProperty('Gemini_API_Key', '')}\"")
+        manifestPlaceholders = [google_maps_key: localProperties.getProperty('MAPS_API_KEY', '')]
     }
 
     buildTypes {

@@ -1,4 +1,4 @@
-package com.example.projecta; // ודא שזה שם החבילה שלך
+package com.example.projecta;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -15,47 +15,46 @@ public class PowerListenerService extends Service {
 
     private PowerReceiver powerReceiver;
     private static final String CHANNEL_ID = "PowerServiceChannel";
-    private static final int NOTIFICATION_ID = 1; // מזהה להתראה של השירות
+    private static final int NOTIFICATION_ID = 1;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        // יוצרים ערוץ התראות (כמו באקטיביטי 4, חובה לאנדרואיד 8+)
         createNotificationChannel();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        // הפיכת השירות ל-Foreground Service כדי שימשיך לרוץ
+        // הפיכת השירות ל-Foreground Service
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("שירות האזנה")
                 .setContentText("מאזין לחיבורי חשמל...")
-                .setSmallIcon(R.drawable.ic_launcher_foreground) // החלף באייקון משלך
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .build();
+
         startForeground(NOTIFICATION_ID, notification);
 
-        // --- כאן קורה הקסם (בדיוק כמו בדוגמה של המורה) ---
         // 1. יוצרים את ה-Receiver
-        powerReceiver = new PowerReceiver();
+        if (powerReceiver == null) {
+            powerReceiver = new PowerReceiver();
+        }
 
         // 2. יוצרים "פילטר" לאירועים שאנו רוצים
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_POWER_CONNECTED);
         filter.addAction(Intent.ACTION_POWER_DISCONNECTED);
 
-        // 3. רושמים את ה-Receiver (רישום דינמי)
+        // 3. רושמים את ה-Receiver
         registerReceiver(powerReceiver, filter);
 
         Toast.makeText(this, "ההאזנה לטעינה הופעלה", Toast.LENGTH_SHORT).show();
 
-        return START_STICKY; // מבקשים שהשירות ימשיך לרוץ
+        return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // --- מבטלים את הרישום כשהשירות מושמד ---
-        // (בדיוק כמו שהמורה עשה ב-onPause או בכפתור)
         if (powerReceiver != null) {
             unregisterReceiver(powerReceiver);
             powerReceiver = null;
@@ -68,13 +67,15 @@ public class PowerListenerService extends Service {
         return null;
     }
 
-    // פונקציית עזר ליצירת ערוץ התראות
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID,
                     "Power Listener Service Channel",
-                    NotificationManager.IMPORTANCE_DEFAULT
+                    // ⭐️ --- התיקון נמצא כאן --- ⭐️
+                    // שיניתי מ-IMPORTANCE_DEFAULT ל-IMPORTANCE_LOW
+                    // זה יציב יותר עבור התראות קבועות של שירות
+                    NotificationManager.IMPORTANCE_LOW
             );
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(serviceChannel);

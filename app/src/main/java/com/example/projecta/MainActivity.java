@@ -11,7 +11,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,12 +31,10 @@ public class MainActivity extends MasterActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // קישור המשתנים לרכיבי ה-XML
         etId = findViewById(R.id.etId);
         etContent = findViewById(R.id.etContent);
         lvMessages = findViewById(R.id.lvMessages);
 
-        // אתחול הרשימה וה-Adapter
         messageList = new ArrayList<>();
         messageAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1,
@@ -58,14 +55,11 @@ public class MainActivity extends MasterActivity {
 
         refMessages.child(id).setValue(content)
                 .addOnSuccessListener(aVoid -> {
-                    // הצלחה
                     Toast.makeText(MainActivity.this, "Data saved successfully!", Toast.LENGTH_SHORT).show();
-                    // נקה את השדות לאחר שמירה
                     etId.setText("");
                     etContent.setText("");
                 })
                 .addOnFailureListener(e -> {
-                    // כישלון
                     Toast.makeText(MainActivity.this, "Failed to save data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
